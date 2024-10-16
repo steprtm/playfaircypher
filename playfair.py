@@ -63,6 +63,22 @@ def encrypt_bigram(bigram, matrix):
     else:
         return matrix[row1][col2] + matrix[row2][col1]
 
+def decrypt_bigram(bigram, matrix):
+    row1, col1 = find_position(matrix, bigram[0])
+    row2, col2 = find_position(matrix, bigram[1])
+    
+    # Jika keduanya berada di baris yang sama
+    if row1 == row2:
+        return matrix[row1][(col1 - 1) % 5] + matrix[row2][(col2 - 1) % 5]
+    
+    # Jika keduanya berada di kolom yang sama
+    elif col1 == col2:
+        return matrix[(row1 - 1) % 5][col1] + matrix[(row2 - 1) % 5][col2]
+    
+    # Jika mereka berada di baris dan kolom yang berbeda
+    else:
+        return matrix[row1][col2] + matrix[row2][col1]
+
 def playfair_encrypt(plaintext, key):
     matrix = generate_playfair_matrix(key)
     bigrams = prepare_text(plaintext)
@@ -72,6 +88,16 @@ def playfair_encrypt(plaintext, key):
         encrypted_text += encrypt_bigram(bigram, matrix)
     
     return encrypted_text
+
+def playfair_decrypt(ciphertext, key):
+    matrix = generate_playfair_matrix(key)
+    bigrams = prepare_text(ciphertext)
+    decrypted_text = ''
+    
+    for bigram in bigrams:
+        decrypted_text += decrypt_bigram(bigram, matrix)
+    
+    return decrypted_text
 
 # Enkripsi dengan kunci "TEKNIK INFORMATIKA"
 plaintexts = [
@@ -83,4 +109,7 @@ plaintexts = [
 key = "TEKNIK INFORMATIKA"
 for plaintext in plaintexts:
     encrypted = playfair_encrypt(plaintext, key)
-    print(f"Plaintext: {plaintext}\nEncrypted: {encrypted}\n")
+    decrypted = playfair_decrypt(encrypted, key)
+    print(f"Plaintext: {plaintext}")
+    print(f"Encrypted: {encrypted}")
+    print(f"Decrypted: {decrypted}\n")
